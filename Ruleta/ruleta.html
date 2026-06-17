@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Casino Roulette - Professional</title>
+    <link rel="stylesheet" href="ruleta.css">
+</head>
+<body>
+
+    <header>
+        <h1>RULETA TRIFOBET</h1>
+        <div class="stats-panel">
+            <div class="stat-box">
+                <span class="stat-label">Balance</span>
+                <span id="balanceDisplay">Bs 1000</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Apuesta Actual</span>
+                <span id="betDisplay">Bs 0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="game-container">
+        <div class="wheel-container">
+            <div class="marker"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-center"></div>
+            </div>
+            <div class="ball-track" id="ballTrack">
+                <div class="ball" id="ball"></div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="roulette-board" id="board">
+                </div>
+        </div>
+    </div>
+
+    <div class="controls-area">
+        <div class="history-bar" id="historyBar">
+            <span style="color:#888; font-size:0.8rem;">Historial:</span>
+        </div>
+
+        <div class="chip-selector">
+            <div class="chip chip-1" onclick="selectChip(1)">1</div>
+            <div class="chip chip-5" onclick="selectChip(5)">5</div>
+            <div class="chip chip-10 selected" onclick="selectChip(10)">10</div>
+            <div class="chip chip-25" onclick="selectChip(25)">25</div>
+            <div class="chip chip-50" onclick="selectChip(50)">50</div>
+            <div class="chip chip-100" onclick="selectChip(100)">100</div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn-clear" onclick="clearBets()">Limpiar Mesa</button>
+            <button class="btn-spin" id="spinBtn" onclick="spin()">GIRAR RULETA</button>
+        </div>
+    </div>
+
+    <div class="message-box" id="msgBox">
+        <h2 id="msgTitle">¡GANASTE!</h2>
+        <span class="amount" id="msgAmount">Bs 0</span>
+        <button class="btn-spin" onclick="closeMsg()">CONTINUAR</button>
+    </div>
+
+    <script src="ruleta.js"></script>
+</body>
+</html>

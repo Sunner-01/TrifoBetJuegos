@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Penalty Casino Royale</title>
+    <link rel="stylesheet" href="penales.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">PENALTY CASINO</div>
+        <div class="credits-box">
+            <span style="color:var(--gold)">Bs</span>
+            <span id="credits-display">1000</span>
+        </div>
+    </header>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen">
+        <div class="title-giant">
+            PENALTY<br>
+            <span>CASINO ROYALE</span>
+        </div>
+        <button class="btn-main" onclick="goToRoleSelect()">JUGAR AHORA</button>
+        <p style="margin-top:20px; color:#777; font-size: 0.8rem;">Tirador: Apuesta Bs 10 | Gana Bs 20 si anotas</p>
+        <p style="color:#777; font-size: 0.8rem; margin-top:5px;">Arquero: Apuesta Bs 10 | Gana Bs 50 si atajas</p>
+    </div>
+
+    <!-- ROLE SELECT SCREEN -->
+    <div id="role-screen" class="screen hidden">
+        <h2 style="color:var(--gold); text-transform:uppercase; letter-spacing:2px;">Elige tu destino</h2>
+        <div class="role-cards">
+            <div class="role-card" onclick="selectRole('shooter')">
+                <span class="role-icon">⚽</span>
+                <h3>TIRADOR</h3>
+                <small style="color:#aaa">Apuesta: Bs 10</small>
+                <small style="color:var(--win-green); display:block; margin-top:5px;">Ganas: Bs 20</small>
+                <small style="color:var(--lose-red); display:block;">Pierdes: Bs 10</small>
+            </div>
+            <div class="role-card" onclick="selectRole('keeper')">
+                <span class="role-icon">🧤</span>
+                <h3>ARQUERO</h3>
+                <small style="color:#aaa">Apuesta: Bs 10</small>
+                <small style="color:var(--win-green); display:block; margin-top:5px;">Ganas: Bs 50</small>
+                <small style="color:var(--lose-red); display:block;">Pierdes: Bs 10</small>
+            </div>
+        </div>
+        <button class="btn-main" style="margin-top:40px; font-size:1rem; padding:10px 30px; background: #333; color:white; box-shadow:none;" onclick="backToStart()">Volver</button>
+    </div>
+
+    <!-- MAIN GAME CONTAINER -->
+    <div id="game-container" class="hidden">
+        
+        <!-- VISUAL FIELD -->
+        <div class="stadium-view">
+            <!-- Message Popups -->
+            <div id="message-overlay">GOAL!</div>
+
+            <!-- The Goal Post -->
+            <div class="goal-post">
+                <!-- Overlay Grid for Animations -->
+                <div class="target-grid" id="visual-grid">
+                    <div class="grid-cell" data-idx="0"></div><div class="grid-cell" data-idx="1"></div><div class="grid-cell" data-idx="2"></div>
+                    <div class="grid-cell" data-idx="3"></div><div class="grid-cell" data-idx="4"></div><div class="grid-cell" data-idx="5"></div>
+                    <div class="grid-cell" data-idx="6"></div><div class="grid-cell" data-idx="7"></div><div class="grid-cell" data-idx="8"></div>
+                </div>
+
+                <!-- KEEPER SVG -->
+                <svg class="keeper-gfx" id="keeper-gfx" viewBox="0 0 100 100">
+                    <g fill="#ff00ff" stroke="white" stroke-width="2">
+                        <circle cx="30" cy="50" r="15" />
+                        <circle cx="70" cy="50" r="15" />
+                        <path d="M30 50 Q50 80 70 50" fill="none" stroke-width="3" />
+                    </g>
+                </svg>
+            </div>
+
+            <!-- BALL SVG -->
+            <svg class="ball-gfx" id="ball-gfx" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="white" stroke="#333" stroke-width="2"/>
+                <path d="M50 5 L50 95 M5 50 L95 50 M18 18 L82 82 M82 18 L18 82" stroke="#333" stroke-width="5"/>
+            </svg>
+        </div>
+
+        <!-- CONTROL DECK -->
+        <div class="control-panel">
+            
+            <div class="history-track" id="history-track">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+
+            <!-- STATS BOX -->
+            <div class="stats-box">
+                <div class="stat-item">
+                    <span class="stat-label">Ganado</span>
+                    <span class="stat-value positive" id="total-wins">Bs 0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Perdido</span>
+                    <span class="stat-value negative" id="total-losses">Bs 0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Neto</span>
+                    <span class="stat-value neutral" id="net-profit">Bs 0</span>
+                </div>
+            </div>
+
+            <div class="info-bar">
+                <span id="role-display">ROL: TIRADOR</span>
+                <span id="status-text">Selecciona zona...</span>
+            </div>
+
+            <!-- 3x3 Button Grid -->
+            <div class="selector-grid" id="input-grid">
+                <button class="select-btn" onclick="playTurn(0)">↖</button>
+                <button class="select-btn" onclick="playTurn(1)">⬆</button>
+                <button class="select-btn" onclick="playTurn(2)">↗</button>
+                <button class="select-btn" onclick="playTurn(3)">⬅</button>
+                <button class="select-btn" onclick="playTurn(4)">◉</button>
+                <button class="select-btn" onclick="playTurn(5)">➡</button>
+                <button class="select-btn" onclick="playTurn(6)">↙</button>
+                <button class="select-btn" onclick="playTurn(7)">⬇</button>
+                <button class="select-btn" onclick="playTurn(8)">↘</button>
+            </div>
+            
+            <button onclick="backToStart()" style="margin-top:15px; width:100%; background:transparent; border:1px solid #333; color:#555; padding:10px; border-radius:5px; cursor:pointer;">Salir</button>
+        </div>
+    </div>
+
+    <script src="penales.js"></script>
+</body>
+</html>
