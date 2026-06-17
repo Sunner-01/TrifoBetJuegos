@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chicken Road – Casino Edition</title>
+    
+    <!-- FALTABA ESTO: Librería Socket.io -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
+    <link rel="stylesheet" href="chicken.css">
+</head>
+
+<body>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div id="game-container">
+
+        <div class="casino-lights"></div>
+
+        <!-- PANEL DE ESTADÍSTICAS -->
+        <div id="stats-panel">
+            <div class="stat-box">
+                <div class="stat-label">Créditos</div>
+                <div class="stat-value" id="ui-credits">100</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Apuesta</div>
+                <div class="stat-value" id="ui-bet">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Usuario</div>
+                <div class="stat-value" id="ui-username">JUGADOR</div>
+            </div>
+        </div>
+
+        <!-- CANVAS DEL JUEGO -->
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <!-- PANTALLA DE INICIO -->
+        <div id="start-screen" class="overlay">
+            <h1>CHICKEN ROAD<span>CASINO EDITION</span></h1>
+
+            <div class="player-info-container">
+                <div class="player-name">PLAYER: <span id="display-username">JUGADOR</span></div>
+                <div class="player-balance">SALDO: <span id="start-credits">100</span></div>
+            </div>
+
+            <p style="color: var(--gold); font-size: 0.9rem; margin-top: 15px; margin-bottom: 10px;">ELIGE TU APUESTA:
+            </p>
+
+            <div class="bet-controls">
+                <button class="chip-btn" onclick="selectBet(1)">1</button>
+                <button class="chip-btn selected" onclick="selectBet(5)">5</button>
+                <button class="chip-btn" onclick="selectBet(10)">10</button>
+                <button class="chip-btn" onclick="selectBet(20)">20</button>
+            </div>
+
+            <div class="input-group">
+                <input type="number" id="bet-input" class="game-input" placeholder="OTRO MONTO" min="1" value="5">
+            </div>
+
+            <button class="action-btn" onclick="startGame()">JUGAR AHORA</button>
+        </div>
+
+        <!-- PANTALLA FIN DE JUEGO / NIVEL -->
+        <div id="result-screen" class="overlay hidden">
+            <h1 id="result-title" class="result-title"></h1>
+            <p id="result-message"></p>
+            <button class="action-btn" onclick="resetToMenu()">CONTINUAR</button>
+        </div>
+
+    </div>
+
+    <!-- CONTROLES MÓVIL -->
+    <div id="mobile-controls">
+        <div class="ctrl-btn ctrl-up" ontouchstart="handleInput('up')" onmousedown="handleInput('up')">▲</div>
+        <div class="ctrl-btn ctrl-left" ontouchstart="handleInput('left')" onmousedown="handleInput('left')">◀</div>
+        <div class="ctrl-btn ctrl-down" ontouchstart="handleInput('down')" onmousedown="handleInput('down')">▼</div>
+        <div class="ctrl-btn ctrl-right" ontouchstart="handleInput('right')" onmousedown="handleInput('right')">▶</div>
+    </div>
+
+    <script src="chicken.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <title>Casino TrifoBet: Tragamonedas</title>
+    <link rel="stylesheet" href="tragamonedas.css">
+</head>
+
+<body>
+
+    <!-- Título móvil (solo visible en móvil/tablet) -->
+    <div class="mobile-header">
+        <h1>TRAGAMONEDAS</h1>
+        <div class="jackpot-display">Acumulado: Bs <span id="jackpot-amount-mobile">10,000.00</span></div>
+    </div>
+
+    <div id="slot-machine">
+        <header>
+            <!-- Desktop: muestra título y jackpot -->
+            <div class="desktop-title">
+                <h1>TRAGAMONEDAS</h1>
+                <div class="jackpot-display">Acumulado: Bs <span id="jackpot-amount">10,000.00</span></div>
+            </div>
+            <!-- Móvil/Tablet: muestra usuario y saldo -->
+            <div class="mobile-user-info">
+                <div class="user-balance-box">
+                    <span class="label">USUARIO</span>
+                    <span class="value" id="username-display-mobile">JUGADOR</span>
+                </div>
+                <div class="user-balance-box">
+                    <span class="label">SALDO</span>
+                    <span class="value" id="balance-display-mobile">1000.00</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-area">
+            <svg class="paylines-svg" id="paylines-svg"></svg>
+            <div class="reels-container" id="reels-container">
+                <!-- Los carretes se generarán con JS -->
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <!-- Desktop: muestra los 4 items -->
+            <div class="info-box desktop-only">USUARIO<br><span class="info-value" id="username-display">JUGADOR</span>
+            </div>
+            <div class="info-box desktop-only">SALDO<br><span class="info-value" id="balance-display">1000.00</span>
+            </div>
+            <!-- Móvil/Desktop: muestra ganancia y apuesta -->
+            <div class="info-box">GANANCIA<br><span class="info-value" id="win-display">0.00</span></div>
+            <div class="info-box">APUESTA<br><span class="info-value" id="total-bet-display">5.00</span></div>
+        </div>
+
+        <div class="controls">
+            <div class="bet-controls">
+                <span class="bet-label">APUESTA TOTAL:</span>
+                <button onclick="game.adjustBetTotal(5)" id="btn-bet-5" class="active-bet">5</button>
+                <button onclick="game.adjustBetTotal(10)" id="btn-bet-10">10</button>
+                <button onclick="game.adjustBetTotal(25)" id="btn-bet-25">25</button>
+                <button onclick="game.adjustBetTotal(50)" id="btn-bet-50">50</button>
+                <input type="number" id="manual-bet-input" min="1" step="1" placeholder="Otro" inputmode="numeric"
+                    pattern="[0-9]*" oninput="game.handleManualBet(event)">
+            </div>
+
+            <div class="spin-controls">
+                <button id="btn-max-bet" class="btn-gold desktop-only" onclick="game.maxBet()">MÁX</button>
+                <button onclick="audio.toggle()" id="btn-sound" class="mobile-tablet-only">🔊</button>
+                <button id="btn-spin" class="btn-spin" onclick="game.spin()">GIRAR</button>
+                <button id="btn-auto" onclick="game.toggleAutoSpin()">AUTO</button>
+            </div>
+
+            <div class="sound-control desktop-only">
+                <button onclick="audio.toggle()" id="btn-sound-desktop">🔊</button>
+            </div>
+        </div>
+
+        <div id="message-overlay">
+            <div class="big-win-text" id="overlay-text">¡GRAN PREMIO!</div>
+            <div class="overlay-amount" id="overlay-amount">Bs 500</div>
+        </div>
+    </div>
+
+    <script src="tragamonedas.js"></script>
+
+</body>
+
+</html>

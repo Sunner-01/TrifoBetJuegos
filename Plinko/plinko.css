@@ -1,0 +1,448 @@
+:root {
+    --bg-dark: #0f121b;
+    --bg-panel: #1a202c;
+    --primary: #00ff88;
+    --accent: #ff007a;
+    --gold: #ffd700;
+    --text-main: #ffffff;
+    --text-muted: #8b9bb4;
+    --loss-red: #ff4444;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 0%, #2a3b55 0%, var(--bg-dark) 60%);
+    z-index: -1;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    flex-grow: 1;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(20, 25, 40, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ui-panel {
+    background: var(--bg-panel);
+    padding: 15px;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid #2d3748;
+    z-index: 10;
+}
+
+@media (min-width: 600px) {
+    .ui-panel {
+        border-radius: 16px;
+        margin-bottom: 20px;
+    }
+}
+
+.stats-group {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+.stat-value.money {
+    color: var(--gold);
+}
+
+.stat-value.loss {
+    color: var(--loss-red);
+}
+
+.stat-value.player-name {
+    background: linear-gradient(135deg, var(--primary), #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bet-controls {
+    display: flex;
+    align-items: center;
+    background: #0f121b;
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid #2d3748;
+}
+
+.bet-btn {
+    background: #2d3748;
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.bet-btn:hover {
+    background: #4a5568;
+}
+
+.bet-btn:active {
+    transform: scale(0.95);
+}
+
+.bet-input {
+    background: transparent;
+    border: none;
+    color: white;
+    text-align: center;
+    width: 80px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.bet-input:focus {
+    outline: none;
+}
+
+.play-btn {
+    background: var(--primary);
+    color: #003311;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    transition: all 0.2s;
+    flex-grow: 1;
+    max-width: 200px;
+}
+
+.play-btn:hover {
+    background: #33ff99;
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+    transform: translateY(-2px);
+}
+
+.play-btn:active {
+    transform: translateY(0);
+}
+
+.play-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: #666;
+}
+
+.play-btn[aria-disabled="true"] {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    color: #666;
+}
+
+.floating-text {
+    position: absolute;
+    font-weight: bold;
+    pointer-events: none;
+    animation: floatUp 1s ease-out forwards;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    font-size: 1.1rem;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-50px) scale(1.2);
+        opacity: 0;
+    }
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-btn {
+    background: #2d3748;
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.volume-btn:hover {
+    background: #4a5568;
+}
+
+.floating-text-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Móvil (≤600px) - Layout completamente reorganizado */
+@media (max-width: 600px) {
+    .ui-panel {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        align-items: stretch;
+        border-radius: 12px 12px 0 0;
+    }
+
+    /* Stats en grid 3 columnas */
+    .stats-group {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        width: 100%;
+    }
+
+    .stat-box {
+        text-align: center;
+        min-width: 0;
+    }
+
+    .stat-value.player-name {
+        font-size: 0.85rem;
+        max-width: none;
+    }
+
+    .stat-label {
+        font-size: 0.6rem;
+        margin-bottom: 3px;
+    }
+
+    .stat-value {
+        font-size: 0.9rem;
+    }
+
+    /* Controles de apuesta - ancho completo */
+    .bet-controls {
+        width: 100%;
+        justify-content: space-between;
+        padding: 6px 8px;
+    }
+
+    .bet-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 0.95rem;
+    }
+
+    .bet-input {
+        width: 70px;
+        font-size: 1rem;
+    }
+
+    /* Botón JUGAR - ancho completo */
+    .play-btn {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        font-size: 1.05rem;
+        margin: 0;
+    }
+
+    /* Botón de audio en esquina superior */
+    .audio-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 20;
+    }
+
+    .volume-btn {
+        width: 42px;
+        height: 42px;
+        background: rgba(45, 55, 72, 0.95);
+        backdrop-filter: blur(10px);
+    }
+}
+
+/* Tablet y pantallas medianas (601px - 900px) */
+@media (min-width: 601px) and (max-width: 900px) {
+    .ui-panel {
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        padding: 12px 15px;
+        gap: 12px;
+    }
+
+    .stats-group {
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    .stat-value.player-name {
+        font-size: 1rem;
+        max-width: 110px;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+    }
+
+    .bet-controls {
+        flex-shrink: 0;
+    }
+
+    .bet-btn {
+        width: 38px;
+        height: 38px;
+    }
+
+    .bet-input {
+        width: 75px;
+    }
+
+    .play-btn {
+        padding: 12px 28px;
+        font-size: 1rem;
+        flex-grow: 0;
+    }
+}
+
+/* Extra pequeño (≤400px) - Layout aún más compacto */
+@media (max-width: 400px) {
+    .ui-panel {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    /* Player en fila completa, stats en 2 columnas */
+    .stats-group {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .stat-box:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .stat-value.player-name {
+        font-size: 0.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.55rem;
+    }
+
+    .stat-value {
+        font-size: 0.85rem;
+    }
+
+    .bet-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+    }
+
+    .bet-input {
+        width: 60px;
+        font-size: 0.95rem;
+    }
+
+    .play-btn {
+        padding: 13px;
+        font-size: 1rem;
+    }
+
+    .volume-btn {
+        width: 38px;
+        height: 38px;
+    }
+}

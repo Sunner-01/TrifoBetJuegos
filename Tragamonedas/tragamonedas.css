@@ -1,0 +1,598 @@
+:root {
+    --gold-gradient: linear-gradient(180deg, #ffd700 0%, #b8860b 50%, #ffd700 100%);
+    --metal-dark: #1a1a1a;
+    --metal-light: #333;
+    --neon-red: #ff0033;
+    --neon-blue: #00f3ff;
+    --glass-bg: rgba(0, 0, 0, 0.85);
+    --reel-bg: #fff;
+    --win-color: #ffd700;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #050505;
+    background-image: radial-gradient(circle at center, #1a0b0b 0%, #000 100%);
+    font-family: 'Arial', sans-serif;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Header móvil - oculto por defecto */
+.mobile-header {
+    display: none;
+}
+
+/* Ocultar elementos móvil/tablet en desktop */
+.mobile-user-info {
+    display: none;
+}
+
+.mobile-tablet-only {
+    display: none;
+}
+
+/* --- Estructura Principal --- */
+#slot-machine {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(135deg, #222 0%, #000 100%);
+    border: 4px solid #b8860b;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(184, 134, 11, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* --- Header --- */
+header {
+    text-align: center;
+    text-transform: uppercase;
+    background: #111;
+    border: 2px solid #b8860b;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: inset 0 0 10px #000;
+    position: relative;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2rem;
+    background: var(--gold-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+}
+
+.jackpot-display {
+    font-size: 1rem;
+    color: var(--neon-red);
+    font-weight: bold;
+    margin-top: 5px;
+    text-shadow: 0 0 5px var(--neon-red);
+}
+
+/* --- Área de Juego (Reels) --- */
+.game-area {
+    position: relative;
+    background: #000;
+    padding: 10px;
+    border-radius: 10px;
+    border: 5px solid #333;
+    box-shadow: inset 0 0 20px #000;
+}
+
+.paylines-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.reels-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    background: #000;
+    overflow: hidden;
+    position: relative;
+}
+
+.reel {
+    background: var(--reel-bg);
+    height: 240px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.reel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 80%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.reel-strip {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0s linear;
+}
+
+.symbol {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 40px;
+    position: relative;
+}
+
+.symbol svg {
+    width: 60%;
+    height: 60%;
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.symbol.win-anim {
+    animation: pulse 0.5s infinite alternate;
+    background-color: rgba(255, 215, 0, 0.3);
+    z-index: 2;
+}
+
+/* --- Panel de Información --- */
+.info-panel {
+    display: flex;
+    justify-content: space-between;
+    background: #222;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    color: #ccc;
+    font-size: 0.9rem;
+    font-family: 'Courier New', monospace;
+}
+
+.info-box {
+    text-align: center;
+}
+
+.info-value {
+    color: var(--win-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* --- Panel de Control --- */
+.controls {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    background: linear-gradient(180deg, #333 0%, #111 100%);
+    padding: 10px;
+    border-radius: 10px;
+    border-top: 2px solid #555;
+}
+
+.bet-controls,
+.spin-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bet-label {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    margin-right: 5px;
+}
+
+.sound-control {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#manual-bet-input {
+    width: 70px;
+    padding: 8px 4px;
+    background: #222;
+    border: 2px solid #666;
+    color: #ffd700;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+#manual-bet-input:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 8px #ffd700;
+}
+
+#manual-bet-input::placeholder {
+    color: #888;
+}
+
+button {
+    background: linear-gradient(180deg, #444 0%, #222 100%);
+    border: 1px solid #666;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: all 0.1s;
+    text-transform: uppercase;
+}
+
+button:active {
+    transform: translateY(2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-gold {
+    background: var(--gold-gradient);
+    color: #000;
+    border: 1px solid #fff;
+    box-shadow: 0 0 5px #ffd700;
+}
+
+.btn-spin {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #ff4444, #990000);
+    border: 4px solid #fff;
+    font-size: 1.2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-spin:active {
+    background: radial-gradient(circle at 30% 30%, #cc0000, #660000);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.active-bet {
+    background: #ffd700 !important;
+    color: #000 !important;
+    border-color: #ffd700 !important;
+}
+
+/* --- Overlay de Mensajes --- */
+#message-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ffd700;
+    padding: 20px 40px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 0 30px #ffd700;
+}
+
+.big-win-text {
+    font-size: 3rem;
+    color: #ffd700;
+    font-weight: 900;
+    text-transform: uppercase;
+    animation: zoomInOut 0.5s infinite alternate;
+}
+
+.overlay-amount {
+    font-size: 1.5rem;
+    color: white;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* --- Animaciones --- */
+@keyframes pulse {
+    from {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+
+    to {
+        transform: scale(1.1);
+        filter: brightness(1.5);
+    }
+}
+
+@keyframes zoomInOut {
+    from {
+        transform: scale(1);
+    }
+
+    to {
+        transform: scale(1.2);
+    }
+}
+
+/* --- RESPONSIVE SOLO PARA TABLET Y MÓVIL --- */
+
+/* Tablet */
+@media (max-width: 900px) and (min-width: 601px) {
+
+    /* Mostrar header móvil */
+    .mobile-header {
+        display: block;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .mobile-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+    }
+
+    /* Ocultar título desktop, mostrar usuario/saldo en header */
+    .desktop-title {
+        display: none;
+    }
+
+    .mobile-user-info {
+        display: flex;
+        justify-content: space-around;
+        gap: 20px;
+    }
+
+    .user-balance-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .user-balance-box .label {
+        font-size: 0.75rem;
+        color: #ccc;
+    }
+
+    .user-balance-box .value {
+        font-size: 1.1rem;
+        color: var(--win-color);
+        font-weight: bold;
+        margin-top: 3px;
+    }
+
+    /* Ocultar usuario y saldo del info-panel */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Mostrar botón de sonido en spin-controls */
+    .mobile-tablet-only {
+        display: inline-flex;
+    }
+
+    /* Info panel con solo 2 items */
+    .info-panel {
+        justify-content: space-around;
+    }
+
+    .controls {
+        grid-template-columns: 1fr auto;
+    }
+
+    .bet-controls {
+        grid-column: 1 / -1;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .spin-controls {
+        grid-column: 1 / -1;
+        justify-content: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    /* Mostrar header móvil */
+    .mobile-header {
+        display: block;
+        text-align: center;
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .mobile-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .mobile-header .jackpot-display {
+        font-size: 0.85rem;
+    }
+
+    /* Ocultar título desktop, mostrar usuario/saldo en header */
+    .desktop-title {
+        display: none;
+    }
+
+    .mobile-user-info {
+        display: flex;
+        justify-content: space-around;
+        gap: 15px;
+    }
+
+    .user-balance-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .user-balance-box .label {
+        font-size: 0.7rem;
+        color: #ccc;
+    }
+
+    .user-balance-box .value {
+        font-size: 0.95rem;
+        color: var(--win-color);
+        font-weight: bold;
+        margin-top: 2px;
+    }
+
+    /* Ocultar elementos desktop */
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Mostrar botón de sonido en spin-controls */
+    .mobile-tablet-only {
+        display: inline-flex;
+    }
+
+    #slot-machine {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    header {
+        padding: 8px;
+    }
+
+    .game-area {
+        padding: 8px;
+        border-width: 3px;
+    }
+
+    .reel {
+        height: 180px;
+    }
+
+    .symbol {
+        height: 60px;
+    }
+
+    .symbol svg {
+        width: 70%;
+        height: 70%;
+    }
+
+    .info-panel {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        font-size: 0.75rem;
+    }
+
+    .info-value {
+        font-size: 0.95rem;
+    }
+
+    .controls {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .bet-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .bet-label {
+        width: 100%;
+        text-align: center;
+        font-size: 0.75rem;
+        margin-bottom: 5px;
+    }
+
+    .spin-controls {
+        justify-content: center;
+    }
+
+    button {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+
+    .btn-spin {
+        width: 70px;
+        height: 70px;
+        font-size: 1rem;
+    }
+
+    #manual-bet-input {
+        width: 60px;
+        font-size: 0.8rem;
+        padding: 6px 4px;
+    }
+
+    #message-overlay {
+        padding: 15px 30px;
+    }
+
+    .big-win-text {
+        font-size: 2rem;
+    }
+
+    .overlay-amount {
+        font-size: 1.2rem;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .bet-controls button:not(#manual-bet-input) {
+        padding: 5px 8px;
+        font-size: 0.65rem;
+    }
+
+    #manual-bet-input {
+        width: 50px;
+        font-size: 0.75rem;
+    }
+
+    .btn-spin {
+        width: 60px;
+        height: 60px;
+    }
+}

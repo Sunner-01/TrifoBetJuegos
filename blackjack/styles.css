@@ -1,0 +1,610 @@
+:root {
+    --table-color: #0f381e;
+    --table-dark: #05160a;
+    --gold: #d4af37;
+    --gold-light: #f3e5ab;
+    --red: #c92a2a;
+    --black: #1a1a1a;
+    --white: #f0f0f0;
+    --card-w: 100px;
+    --card-h: 140px;
+    --chip-size: 60px;
+}
+* {
+    box-sizing: border-box;
+    user-select: none;
+}
+body {
+    margin: 0;
+    background: radial-gradient(circle at center, var(--table-color) 0%, var(--table-dark) 100%);
+    font-family: 'Roboto', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* --- TEXTURAS Y AMBIENTE --- */
+.felt-texture {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' viewBox='0 0 4 4' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3h1v1H1V3zm2-2h1v1H3V1z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+}
+.logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-top: 10px;
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 1;
+    border-bottom: 1px solid var(--gold);
+    padding-bottom: 5px;
+}
+/* --- TABLERO DE JUEGO --- */
+#game-area {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+/* --- ZONAS DE CARTAS --- */
+.hand-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 180px;
+    position: relative;
+}
+.score-bubble {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--gold);
+    padding: 5px 15px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.score-bubble.visible { opacity: 1; }
+.score-bubble.winner { background: var(--gold); color: var(--black); }
+.score-bubble.buster { background: var(--red); }
+.cards-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: var(--card-h);
+    flex-wrap: wrap;
+}
+/* --- CARTAS CSS PURO --- */
+.card {
+    width: var(--card-w);
+    height: var(--card-h);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: -2px 2px 10px rgba(0,0,0,0.4);
+    position: relative;
+    margin-left: -40px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 5px;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    transform-origin: bottom center;
+}
+.card:first-child { margin-left: 0; }
+.card:hover { transform: translateY(-10px) scale(1.05); z-index: 10; }
+.card.red { color: var(--red); }
+.card.black { color: var(--black); }
+.card-top, .card-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.2rem;
+    line-height: 1;
+}
+.card-bottom { transform: rotate(180deg); }
+.card-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+}
+/* Carta oculta (Reverso) */
+.card.hidden {
+    background: repeating-linear-gradient(
+        45deg,
+        #606dbc,
+        #606dbc 10px,
+        #465298 10px,
+        #465298 20px
+    );
+    border: 2px solid #fff;
+}
+.card.hidden * { display: none; }
+/* Animación de reparto */
+@keyframes deal {
+    from { transform: translate(100vw, -100vh) rotate(180deg); opacity: 0; }
+    to { transform: translate(0, 0) rotate(0); opacity: 1; }
+}
+.card.dealing { animation: deal 0.5s forwards; }
+/* --- INTERFAZ DE USUARIO --- */
+.controls-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.message-box {
+    height: 30px;
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    text-shadow: 0 1px 2px black;
+    margin-bottom: 10px;
+    font-weight: 500;
+    text-align: center;
+}
+/* Botones de Acción */
+.actions-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.btn-action {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.btn-action:hover:not(:disabled) {
+    background: var(--gold);
+    color: var(--black);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px var(--gold);
+}
+.btn-action:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: #555;
+}
+.btn-action.large {
+    width: auto;
+    padding: 0 30px;
+    border-radius: 35px;
+}
+/* --- FICHAS Y APUESTAS --- */
+.betting-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(0,0,0,0.4);
+    padding: 10px 30px;
+    border-radius: 50px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.chip-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.chip {
+    width: var(--chip-size);
+    height: var(--chip-size);
+    border-radius: 50%;
+    border: 4px dashed white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+    position: relative;
+}
+.chip::before {
+    content: '';
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.chip:hover { transform: translateY(-10px); }
+.chip.selected { transform: translateY(-15px); box-shadow: 0 15px 20px rgba(0,0,0,0.6); }
+.chip-1 { background: radial-gradient(circle, #eee 30%, #999 100%); color: #000; border-color: #333; text-shadow: none; }
+.chip-5 { background: radial-gradient(circle, #e53935 30%, #b71c1c 100%); }
+.chip-25 { background: radial-gradient(circle, #43a047 30%, #1b5e20 100%); }
+.chip-100 { background: radial-gradient(circle, #1e88e5 30%, #0d47a1 100%); }
+.chip-500 { background: radial-gradient(circle, #333 30%, #000 100%); border-color: var(--gold); color: var(--gold); }
+.stats {
+    display: flex;
+    gap: 30px;
+    font-size: 1.1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.stat-box {
+    text-align: center;
+}
+.stat-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+.stat-value { font-size: 1.3rem; color: var(--gold); font-family: 'Playfair Display', serif; }
+/* --- OVERLAY DE RESULTADO --- */
+#result-overlay {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+    pointer-events: none;
+    z-index: 100;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    white-space: nowrap;
+}
+#result-overlay.show { transform: translate(-50%, -50%) scale(1); }
+/* SPLIT HANDS (Cuando divide) */
+#player-hands-container {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.split-hand { opacity: 0.5; transition: opacity 0.3s; }
+.split-hand.active-hand { opacity: 1; }
+.active-indicator {
+    width: 0; height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 15px solid var(--gold);
+    margin: 0 auto 5px auto;
+    opacity: 0;
+}
+.active-hand .active-indicator { opacity: 1; }
+
+/* === Nombre del usuario === */
+.user-info {
+    font-family: 'Playfair Display', serif;
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    color: var(--gold);
+    padding: 12px 25px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+}
+
+.user-info::before {
+    font-family: 'Playfair Display', serif;
+    content: "Player: ";
+    font-size: 1.3rem;
+    margin-right: 8px;
+}
+
+/* ========================================= */
+/* RESPONSIVE - MÓVILES - FORZANDO TAMAÑOS */
+/* ========================================= */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .logo {
+        font-size: 1.4rem;
+        margin-top: 8px;
+        padding-bottom: 5px;
+    }
+    
+    /* Usuario centrado debajo del logo en móvil */
+    .user-info {
+        position: static;
+        margin: 12px auto 8px;
+        padding: 10px 22px;
+        font-size: 1.05rem;
+        text-align: center;
+        display: block;
+        width: fit-content;
+    }
+    
+    .user-info::before {
+        font-size: 1.05rem;
+        margin-right: 6px;
+    }
+    
+    #game-area {
+        padding: 12px 8px;
+        gap: 12px;
+    }
+    
+    .hand-area {
+        min-height: 200px;
+    }
+    
+    .score-bubble {
+        padding: 8px 16px;
+        font-size: 1.15rem;
+        margin-bottom: 10px;
+    }
+    
+    .cards-container {
+        height: auto;
+        min-height: 170px;
+        padding: 5px;
+    }
+    
+    /* CARTAS GRANDES FORZADAS */
+    .card {
+        width: 120px !important;
+        height: 170px !important;
+        min-width: 120px !important;
+        min-height: 170px !important;
+        max-width: 120px !important;
+        max-height: 170px !important;
+        margin-left: -50px;
+        border-radius: 10px;
+        padding: 8px;
+    }
+    
+    .card:first-child { 
+        margin-left: 0 !important; 
+    }
+    
+    .card-top, .card-bottom {
+        font-size: 1.6rem !important;
+        padding: 4px;
+    }
+    
+    .card-center { 
+        font-size: 3.5rem !important;
+    }
+    
+    .card:hover { 
+        transform: translateY(-8px) scale(1.05); 
+    }
+    
+    .message-box {
+        font-size: 1.15rem;
+        height: auto;
+        min-height: 30px;
+        margin-bottom: 10px;
+    }
+    
+    .btn-action { 
+        width: 68px; 
+        height: 68px; 
+        font-size: 0.75rem;
+        border-width: 2.5px;
+    }
+    
+    .btn-action.large { 
+        width: auto; 
+        padding: 15px 30px; 
+        height: auto;
+        font-size: 0.95rem;
+    }
+    
+    .actions-row {
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .betting-controls { 
+        flex-direction: column; 
+        gap: 15px; 
+        padding: 16px 14px; 
+        width: 96%;
+        max-width: 450px;
+        border-radius: 22px;
+        margin: 0 auto;
+    }
+    
+    .stats { 
+        gap: 28px;
+        width: 100%;
+        justify-content: space-around;
+    }
+    
+    .stat-box {
+        flex: 1;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+    
+    .stat-value {
+        font-size: 1.25rem;
+    }
+    
+    .chip-container {
+        gap: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .chip {
+        width: 58px;
+        height: 58px;
+        font-size: 0.95rem;
+    }
+    
+    #player-hands-container {
+        gap: 20px;
+    }
+    
+    #result-overlay {
+        font-size: 3rem;
+    }
+    
+    .controls-area {
+        gap: 12px;
+        width: 100%;
+    }
+}
+
+/* Para pantallas muy pequeñas (menos de 400px) */
+@media (max-width: 400px) {
+    .logo {
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+    }
+    
+    .user-info {
+        font-size: 0.95rem;
+        padding: 9px 20px;
+        margin: 10px auto 6px;
+    }
+    
+    .user-info::before {
+        font-size: 0.95rem;
+    }
+    
+    /* CARTAS GRANDES para pantallas pequeñas */
+    .card {
+        width: 105px !important;
+        height: 150px !important;
+        min-width: 105px !important;
+        min-height: 150px !important;
+        max-width: 105px !important;
+        max-height: 150px !important;
+        margin-left: -45px !important;
+    }
+    
+    .card:first-child {
+        margin-left: 0 !important;
+    }
+    
+    .card-top, .card-bottom {
+        font-size: 1.4rem !important;
+    }
+    
+    .card-center { 
+        font-size: 3rem !important;
+    }
+    
+    .cards-container {
+        min-height: 155px;
+    }
+    
+    .btn-action { 
+        width: 62px; 
+        height: 62px; 
+        font-size: 0.7rem;
+    }
+    
+    .btn-action.large { 
+        padding: 13px 26px; 
+        font-size: 0.88rem;
+    }
+    
+    .chip {
+        width: 52px;
+        height: 52px;
+        font-size: 0.88rem;
+    }
+    
+    .stats {
+        gap: 22px;
+    }
+    
+    .stat-value {
+        font-size: 1.15rem;
+    }
+    
+    #result-overlay {
+        font-size: 2.5rem;
+    }
+    
+    .score-bubble {
+        font-size: 1.05rem;
+        padding: 7px 14px;
+    }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .card {
+        width: 90px !important;
+        height: 130px !important;
+        min-width: 90px !important;
+        min-height: 130px !important;
+        max-width: 90px !important;
+        max-height: 130px !important;
+    }
+    
+    #game-area {
+        max-height: none;
+        padding: 8px;
+    }
+    
+    .hand-area {
+        min-height: 140px;
+    }
+    
+    .user-info {
+        margin: 6px auto 4px;
+        padding: 7px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
+        margin-top: 6px;
+    }
+    
+    .card-center {
+        font-size: 2.5rem !important;
+    }
+    
+    .cards-container {
+        min-height: 135px;
+    }
+}

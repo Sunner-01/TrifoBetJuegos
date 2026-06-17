@@ -1,0 +1,470 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Rajdhani:wght@600;700&display=swap');
+
+:root {
+    --primary: #00ff88;
+    --primary-dim: #00cc6a;
+    --accent: #ff0055;
+    --dark-bg: #0a0a12;
+    --panel-bg: #151520;
+    --text-main: #ffffff;
+    --text-dim: #8888aa;
+    --gold: #ffd700;
+    --glass: rgba(255, 255, 255, 0.05);
+    --border-glow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+* {
+    box-sizing: border-box;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    background-image:
+        radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 70%),
+        linear-gradient(0deg, #050505 0%, #0a0a12 100%);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    /* Un poco más ancho para respiro */
+    border-radius: 24px;
+    background: var(--panel-bg);
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+/* --- PANEL DE ESTADÍSTICAS --- */
+#stats-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(20, 20, 30, 0.95);
+    padding: 15px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    color: var(--primary);
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+#ui-credits {
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* --- CANVAS --- */
+canvas {
+    display: block;
+    width: 100%;
+    background: #111;
+    image-rendering: pixelated;
+    /* Mantiene el estilo nítido */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- PANTALLAS (OVERLAYS) --- */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 18, 0.92);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    text-align: center;
+    padding: 30px;
+    transition: opacity 0.4s ease, visibility 0.4s;
+}
+
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+h1 {
+    font-family: 'Rajdhani', sans-serif;
+    color: var(--text-main);
+    font-size: 3rem;
+    margin: 0 0 10px 0;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    background: linear-gradient(to bottom, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h1 span {
+    display: block;
+    font-size: 1rem;
+    color: var(--primary);
+    margin-top: 5px;
+    letter-spacing: 6px;
+    -webkit-text-fill-color: var(--primary);
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+}
+
+p {
+    color: var(--text-dim);
+    margin: 10px 0 25px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* --- SISTEMA DE APUESTAS --- */
+.player-info-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-name {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.player-balance {
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.bet-controls {
+    display: flex;
+    gap: 10px;
+    margin: 0 0 15px 0;
+    justify-content: center;
+    width: 100%;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.game-input {
+    width: 80%;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--primary-dim);
+    border-radius: 12px;
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+}
+
+.game-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.game-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.balance-display {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-top: 10px;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.chip-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--glass);
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.chip-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.chip-btn.selected {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    transform: scale(1.1);
+}
+
+/* --- BOTONES DE ACCIÓN --- */
+.action-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dim) 100%);
+    border: none;
+    color: #000;
+    padding: 18px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0.4), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 255, 136, 0.4);
+}
+
+.action-btn:hover::after {
+    opacity: 1;
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
+
+/* --- CONTROLES MÓVILES --- */
+#mobile-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 65px);
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.ctrl-btn {
+    background: var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+.ctrl-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.ctrl-up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.ctrl-left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.ctrl-down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.ctrl-right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+/* --- RESULTADOS --- */
+.result-title {
+    font-size: 4rem;
+    margin-bottom: 10px;
+}
+
+.win-text {
+    background: linear-gradient(to bottom, #ffd700, #ffaa00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+}
+
+.lose-text {
+    background: linear-gradient(to bottom, #ff4444, #cc0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 68, 68, 0.5));
+}
+
+/* --- ANIMACIONES --- */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(0, 255, 136, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+    }
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    body {
+        justify-content: flex-start;
+        /* Alinear arriba en móviles */
+        padding: 0;
+        background: #000;
+        /* Fondo negro puro para blending */
+    }
+
+    #game-container {
+        max-width: 100%;
+        width: 100%;
+        height: 100vh;
+        /* Ocupar toda la altura */
+        border-radius: 0;
+        /* Sin bordes redondeados */
+        border: none;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Ajustar el canvas para que ocupe el espacio restante */
+    canvas {
+        flex-grow: 1;
+        object-fit: contain;
+        /* Mantener proporción sin deformar */
+        background: #111;
+        width: 100%;
+        height: auto;
+        /* Dejar que flex lo maneje o auto */
+        max-height: 70vh;
+        /* Limitar altura para dejar espacio a controles */
+    }
+
+    #stats-panel {
+        padding: 10px 15px;
+        flex-shrink: 0;
+        /* No encoger */
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    /* Controles móviles fijos abajo */
+    #mobile-controls {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        background: rgba(21, 21, 32, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        margin: 0;
+        z-index: 100;
+        padding-bottom: max(15px, env(safe-area-inset-bottom));
+        /* Respetar notch/barras */
+    }
+
+    /* Ajustar superposiciones para pantalla completa */
+    .overlay {
+        position: fixed;
+        /* Fijo respecto a la ventana */
+        z-index: 200;
+    }
+}

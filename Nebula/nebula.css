@@ -1,0 +1,439 @@
+:root {
+    --primary: #00ff88;
+    --primary-dim: #00cc6a;
+    --accent: #ff0055;
+    --dark-bg: #0a0a12;
+    --panel-bg: #151520;
+    --text-main: #ffffff;
+    --text-dim: #8888aa;
+    --gold: #ffd700;
+    --glass: rgba(255, 255, 255, 0.05);
+    --border-glow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+:root {
+    --space-bg: #050510;
+    --hud-cyan: #00f0ff;
+    --hud-red: #ff2a2a;
+    --hud-gold: #ffd700;
+    --glass-panel: rgba(10, 20, 40, 0.85);
+    --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--space-bg);
+    /* Fondo de seguridad */
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    position: fixed;
+    /* Evita scroll elástico en iOS */
+}
+
+#game-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: block;
+}
+
+/* --- UI LAYOUT --- */
+.ui-layer {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+}
+
+/* TOP HUD */
+.top-hud {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
+    pointer-events: auto;
+    min-height: 60px;
+    gap: 10px;
+}
+
+.player-info {
+    display: flex;
+    gap: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.player-name {
+    color: var(--hud-cyan);
+    
+}
+
+.player-balance {
+    color: var(--hud-gold);
+   
+}
+
+.history-strip {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    max-width: 100%;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to left, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, black 80%, transparent 100%);
+}
+
+.history-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.pill {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    min-width: 50px;
+    text-align: center;
+    font-family: 'Teko', sans-serif;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pill.win {
+    color: var(--hud-cyan);
+    border-color: var(--hud-cyan);
+}
+
+.pill.lose {
+    color: var(--hud-red);
+    border-color: var(--hud-red);
+    opacity: 0.7;
+}
+
+.pill.jackpot {
+    color: var(--hud-gold);
+    border-color: var(--hud-gold);
+    background: rgba(255, 215, 0, 0.2);
+}
+
+/* CENTER STATS */
+.center-stage {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.multiplier-readout {
+    font-family: 'Teko', sans-serif;
+    font-size: clamp(4rem, 15vw, 8rem);
+    line-height: 1;
+    font-weight: 400;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+}
+
+.multiplier-readout.crashed {
+    color: var(--hud-red);
+    text-shadow: 0 0 50px rgba(255, 42, 42, 0.8);
+    animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+
+.game-status {
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--hud-cyan);
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.6);
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+}
+
+/* CONTROL DECK */
+.control-deck {
+    background: var(--glass-panel);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    padding-bottom: max(15px, var(--safe-area-bottom));
+    pointer-events: auto;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* RESPONSIVE LOGIC */
+.input-module {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+}
+
+.input-label {
+    font-size: 0.75rem;
+    color: #aaa;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+}
+
+.balance-txt {
+    color: var(--hud-cyan);
+    font-weight: bold;
+}
+
+.input-wrapper {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    height: 50px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.stepper-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.stepper-btn:active {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+input[type=number] {
+    background: transparent;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-family: 'Teko';
+    font-size: 1.8rem;
+    width: 80px;
+    padding: 0;
+    /* Fix para quitar flechas del input number */
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+}
+
+input:focus {
+    outline: none;
+}
+
+.launch-btn {
+    height: 60px;
+    flex: 1;
+    min-width: 120px;
+    max-width: 280px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s;
+}
+
+.launch-btn:active {
+    transform: scale(0.96);
+}
+
+.btn-title {
+    font-family: 'Teko';
+    font-size: 1.8rem;
+    line-height: 0.9;
+    font-weight: 600;
+}
+
+.btn-sub {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.btn-bet {
+    background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+    color: #fff;
+}
+
+.btn-cashout {
+    background: linear-gradient(135deg, #f09819 0%, #edde5d 100%);
+    color: #332200;
+    animation: pulse 0.8s infinite;
+}
+
+.btn-wait {
+    background: #34495e;
+    color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.btn-cancel {
+    background: #e74c3c;
+    color: #fff;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes glitch {
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
+}
+
+/* MOBILE PORTRAIT */
+@media (max-width: 768px) {
+    .control-deck {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    .launch-btn {
+        width: 100%;
+        max-width: none;
+        height: 65px;
+    }
+
+    .btn-title {
+        font-size: 2rem;
+    }
+
+    .input-wrapper {
+        height: 55px;
+    }
+
+    .center-stage {
+        top: 40%;
+    }
+}
+
+/* MOBILE LANDSCAPE */
+@media (max-height: 500px) and (orientation: landscape) {
+    .control-deck {
+        flex-direction: row;
+        height: 70px;
+        padding: 5px 20px;
+    }
+
+    .launch-btn {
+        height: 100%;
+    }
+
+    .multiplier-readout {
+        font-size: 4rem;
+    }
+
+    .center-stage {
+        top: 30%;
+    }
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-8px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(8px);
+    }
+}

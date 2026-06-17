@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <title>TrifoBet Casino Plinko</title>
+    <link rel="stylesheet" href="plinko.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="plinkoCanvas" aria-label="Tablero de juego Plinko"></canvas>
+        <div class="floating-text-container" id="floatingTextContainer"></div>
+    </div>
+    <div class="ui-panel">
+        <div class="stats-group">
+            <div class="stat-box player-box">
+                <span class="stat-label">Jugador</span>
+                <span class="stat-value player-name" id="playerDisplay">PLAYER</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Saldo</span>
+                <span class="stat-value money" id="balanceDisplay">Bs1000.00</span>
+
+            </div>
+            <div class="stat-box" id="lastResultContainer" style="display:none;">
+                <span class="stat-label">Último Resultado</span>
+                <span class="stat-value" id="lastResultText">Bs0.00</span>
+            </div>
+        </div>
+        <div class="bet-controls">
+            <button class="bet-btn" id="halveBetBtn" aria-label="Reducir apuesta a la mitad">÷2</button>
+            <button class="bet-btn" id="decreaseBetBtn" aria-label="Disminuir apuesta en 1">-</button>
+            <input type="number" id="betInput" class="bet-input" value="10" min="1" readonly
+                aria-label="Valor de la apuesta actual">
+            <button class="bet-btn" id="increaseBetBtn" aria-label="Aumentar apuesta en 1">+</button>
+            <button class="bet-btn" id="doubleBetBtn" aria-label="Duplicar apuesta">x2</button>
+        </div>
+        <div class="audio-controls">
+            <button class="volume-btn" id="muteBtn" aria-label="Silenciar o activar sonido">
+                <span id="muteIcon">🔊</span>
+            </button>
+        </div>
+        <button class="play-btn" id="playButton" aria-label="Jugar con la apuesta actual">JUGAR</button>
+    </div>
+
+    <script src="plinko.js"></script>
+</body>
+
+</html>

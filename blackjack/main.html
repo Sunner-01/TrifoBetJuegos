@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Casino</title>
+
+    <!-- Fuente elegante estilo Casino -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+
+    <div class="felt-texture"></div>
+    <div class="logo">Blackjack</div>
+
+    <!-- NOMBRE DEL USUARIO EN ESQUINA SUPERIOR IZQUIERDA -->
+    <div class="user-info">
+        <span id="username-display">Cargando...</span>
+    </div>
+
+    <div id="game-area">
+        <!-- Dealer Section -->
+        <div class="hand-area" id="dealer-area">
+            <div class="score-bubble" id="dealer-score">0</div>
+            <div class="cards-container" id="dealer-cards"></div>
+        </div>
+
+        <!-- Result Overlay -->
+        <div id="result-overlay">BLACKJACK</div>
+
+        <!-- Player Section -->
+        <div id="player-hands-container">
+            <div class="hand-area split-hand active-hand" id="p-hand-0">
+                <div class="active-indicator"></div>
+                <div class="score-bubble" id="p-score-0">0</div>
+                <div class="cards-container" id="p-cards-0"></div>
+            </div>
+        </div>
+
+        <!-- Controls & Info -->
+        <div class="controls-area">
+            <div class="message-box" id="game-message">Haz tu apuesta</div>
+
+            <!-- Botones de Juego -->
+            <div class="actions-row" id="game-actions" style="display: none;">
+                <button class="btn-action" id="btn-hit">Pedir</button>
+                <button class="btn-action" id="btn-stand">Parar</button>
+                <button class="btn-action" id="btn-double">x2</button>
+                <button class="btn-action" id="btn-split" disabled>Split</button>
+            </div>
+
+            <div class="actions-row" id="insurance-actions" style="display: none;">
+                <button class="btn-action large" id="btn-ins-yes">Seguro (Sí)</button>
+                <button class="btn-action large" id="btn-ins-no">No</button>
+            </div>
+
+            <div class="actions-row" id="new-game-actions" style="display: none;">
+                <button class="btn-action large" id="btn-new-game">Nueva Mano</button>
+            </div>
+
+            <!-- Zona de Apuestas -->
+            <div class="betting-controls" id="betting-controls">
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Balance</div>
+                        <div class="stat-value">Bs <span id="balance-display">Cargando...</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Apuesta</div>
+                        <div class="stat-value">Bs <span id="bet-display">0</span></div>
+                    </div>
+                </div>
+
+                <div class="chip-container" id="chip-rack">
+                    <div class="chip chip-1" data-value="1">1</div>
+                    <div class="chip chip-5" data-value="5">5</div>
+                    <div class="chip chip-25" data-value="25">25</div>
+                    <div class="chip chip-100" data-value="100">100</div>
+                    <div class="chip chip-500" data-value="500">500</div>
+                </div>
+
+                <button class="btn-action large" id="btn-deal" disabled>Repartir</button>
+                <button class="btn-action" style="width:auto; padding:0 15px; height: 40px; border-radius: 10px; background: #333; border: 1px solid #555;" id="btn-clear">X</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
