@@ -19,7 +19,7 @@ if (!token) {
     alert("Error: No se pudo autenticar el usuario.");
 }
 // ------------------------------------------------------------
-const socket = io(`http://${window.location.hostname}:3000`, {
+const socket = io(`https://trifobetbackend.onrender.com`, {
   auth: { token },
   transports: ['polling', 'websocket'],
   reconnectionAttempts: 5

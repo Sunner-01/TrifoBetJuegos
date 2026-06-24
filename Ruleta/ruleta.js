@@ -19,7 +19,7 @@ if (!token) {
 }
 // ------------------------------------------------------------
 // IP DEL SERVIDOR
-const socket = io(`http://${window.location.hostname}:3000`, { 
+const socket = io(`https://trifobetbackend.onrender.com`, { 
   auth: { token },
   transports: ['polling', 'websocket'],
 });
