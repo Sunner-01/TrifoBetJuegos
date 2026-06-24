@@ -33,7 +33,7 @@ if (!token) {
     console.log("Token recuperado:", token.substring(0, 10) + "...");
 }
 
-const socket = io('http://localhost:3000', {
+const socket = io(`http://${window.location.hostname}:3000`, {
     auth: { token },
     transports: ['polling', 'websocket'],
     reconnectionAttempts: 5
